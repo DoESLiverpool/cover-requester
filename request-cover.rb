@@ -148,7 +148,6 @@ for day in 0..6
       else
         next
       end
-      puts "event: #{ev} span: #{span}"
       cover << span[:label] unless cover.index(span[:label])
     end
   end
