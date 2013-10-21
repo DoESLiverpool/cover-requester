@@ -65,6 +65,8 @@ def doodle_xml(args)
   }
 end
 
+dry_run = !! ARGV.index('-n')
+
 week_start = (Time.now + 7.days).start_of_work_week
 week_end = week_start + 7.days
 
@@ -148,6 +150,9 @@ for day in 0..6
       else
         next
       end
+      if dry_run
+        puts "#{daystr} #{span[:label]}: #{ev[:summary]}"
+      end
       cover << span[:label] unless cover.index(span[:label])
     end
   end
@@ -161,6 +166,11 @@ end
 
 # Generate the XML
 xml = doodle_xml(args)
+
+if dry_run
+  puts xml
+  exit
+end
 
 # Submit the XML using Doodle's OAuth API
 consumer = OAuth::Consumer.new DOODLE_OAUTH_KEY, DOODLE_OAUTH_SECRET, {:site=>"https://doodle.com", :http_method => :get, :request_token_path => '/api1/oauth/requesttoken', :access_token_path => '/api1/oauth/accesstoken' }
