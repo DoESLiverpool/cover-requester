@@ -63,9 +63,10 @@ end
 
 lacking = []
 options.each do |option|
-  day = Time.at(option["start"]).strftime("%Y-%m-%d")
-  if day == check_date and option[:definites].length == 0
-    option["formatted_date"] = day
+  date = Time.at(option["start"]).strftime("%Y-%m-%d")
+  day = Time.at(option["start"]).strftime("%A")
+  if date == check_date and option[:definites].length == 0
+    option["formatted_date"] = "#{day} #{date}"
     lacking << option
   end
 end
