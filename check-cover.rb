@@ -72,7 +72,7 @@ options.each do |option|
 end
 
 if lacking.length > 0
-  puts "We are missing support for the following time periods:"
+  puts "We are missing cover for the following time periods:"
   lacking.each do |option|
     puts "    #{option["formatted_date"]} #{option["text"]} #{option[:maybes].length == 0 ? "(With no maybes)" : "(With these maybes: #{option[:maybes].join(", ")})" }"
   end
