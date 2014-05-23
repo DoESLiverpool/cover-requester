@@ -14,6 +14,9 @@ DOODLE_LEVELS = 3 # 2 for Yes/No, 3 for Yes/No/If-need-be
 DOODLE_OAUTH_KEY = ""
 DOODLE_OAUTH_SECRET = ""
 
+# Filename to place the URL to the latest poll in
+LATEST_POLL_FILENAME = "latest-poll.dat"
+
 # The times of day that you need cover, default is AM/PM/Eve
 TIME_SPANS = [
   {

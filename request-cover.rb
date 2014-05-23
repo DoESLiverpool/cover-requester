@@ -178,5 +178,9 @@ consumer = OAuth::Consumer.new DOODLE_OAUTH_KEY, DOODLE_OAUTH_SECRET, {:site=>"h
 request_token = consumer.get_request_token
 access_token = request_token.get_access_token
 response = access_token.post( '/api1/polls', xml, { 'Content-Type' => 'application/xml' })
+File.open(LATEST_POLL_FILENAME, "w") do |f|
+  f.write "http://doodle.com/#{response["content-location"]}"
+end
+puts response.to_hash.inspect
 puts response.body
 puts response.inspect
