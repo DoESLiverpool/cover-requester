@@ -21,14 +21,14 @@ if ARGV.length < 1
   exit
 end
 
-poll = ARGV.shift
+poll_link = ARGV.shift
 check_date = ARGV.shift
 
 if check_date.nil?
   check_date = (Time.now + 1.day).strftime("%Y-%m-%d")
 end
 
-response = Net::HTTP.get_response(URI.parse(poll))
+response = Net::HTTP.get_response(URI.parse(poll_link))
 
 json = response.body
 json = json.gsub(/.*doodleJS.data.poll =/m, '')
@@ -76,4 +76,6 @@ if lacking.length > 0
   lacking.each do |option|
     puts "    #{option["formatted_date"]} #{option["text"]} #{option[:maybes].length == 0 ? "(With no maybes)" : "(With these maybes: #{option[:maybes].join(", ")})" }"
   end
+  puts
+  puts "Doodle: #{poll_link}"
 end
