@@ -31,8 +31,8 @@ end
 response = Net::HTTP.get_response(URI.parse(poll_url))
 
 json = response.body
-json = json.gsub(/.*doodleJS.data.poll =/m, '')
-json = json.gsub(/;\n.*/m, '')
+json = json.gsub(/.*\$\.extend\(true, doodleJS\.data, \{"poll":/m, '')
+json = json.gsub(/\}\);\n.*/m, '')
 
 poll = JSON.parse(json)
 
