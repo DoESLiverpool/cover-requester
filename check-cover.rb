@@ -28,7 +28,19 @@ if check_date.nil?
   check_date = (Time.now + 1.day).strftime("%Y-%m-%d")
 end
 
-response = Net::HTTP.get_response(URI.parse(poll_url))
+for i in 0..5
+  begin
+    response = Net::HTTP.get_response(URI.parse(poll_url))
+  rescue SocketError
+    sleep 10
+  end
+  break if response
+end
+
+if response.nil?
+  puts "Failed to load even with retries, giving up."
+  exit 1
+end
 
 json = response.body
 json = json.gsub(/.*\$\.extend\(true, doodleJS\.data, \{"poll":/m, '')
