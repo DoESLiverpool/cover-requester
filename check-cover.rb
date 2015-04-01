@@ -13,19 +13,38 @@ require_relative 'time_start_and_end_extensions'
 require_relative 'local_config'
 
 def usage
-  puts "usage: check-cover.rb <doodle-url> [<YYYY-MM-DD>]"
+  puts "usage: check-cover.rb [-h] [<YYYY-MM-DD>|nextweek] [<doodle-url>]"
 end
 
-if ARGV.length < 1
+if ! ARGV.index("-h").nil?
   usage
   exit
 end
 
-poll_url = ARGV.shift
 check_date = ARGV.shift
+poll_url = ARGV.shift
 
 if check_date.nil?
   check_date = (Time.now + 1.day).strftime("%Y-%m-%d")
+elsif check_date == "nextweek"
+  check_date = (Time.now.start_of_work_week + 7.days).strftime("%Y-%m-%d")
+end
+
+if poll_url.nil?
+  week_start = Time.parse(check_date).start_of_work_week
+  filename = File.dirname(__FILE__) + ("/doodle-%d-%02d-%02d.dat" % [ week_start.year, week_start.month, week_start.day ] )
+  begin
+    f = File.open(filename, "r")
+    poll_url = f.read
+    f.close
+  rescue
+    puts "Problem reading URL file for #{week_start.strftime("%Y-%m-%d")}.\n\n"
+  end
+end
+
+if poll_url.nil? or ! check_date.match(/^\d{4}-\d{2}-\d{2}$/) or ! poll_url.match(/^http/)
+  usage
+  exit
 end
 
 for i in 0..5

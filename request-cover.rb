@@ -167,6 +167,10 @@ end
 # Generate the XML
 xml = doodle_xml(args)
 
+filename = File.dirname(__FILE__) + ("/doodle-%d-%02d-%02d.dat" % [ week_start.year, week_start.month, week_start.day ] )
+
+puts "filename=#{filename}"
+
 if dry_run
   puts xml
   exit
@@ -178,7 +182,7 @@ consumer = OAuth::Consumer.new DOODLE_OAUTH_KEY, DOODLE_OAUTH_SECRET, {:site=>"h
 request_token = consumer.get_request_token
 access_token = request_token.get_access_token
 response = access_token.post( '/api1/polls', xml, { 'Content-Type' => 'application/xml' })
-File.open(LATEST_POLL_FILENAME, "w") do |f|
+File.open(filename, "w") do |f|
   f.write "http://doodle.com/#{response["content-location"]}"
 end
 puts response.to_hash.inspect
