@@ -127,6 +127,7 @@ To: #{MAIL_LONG_NOTIFY_ADDRESS}
 MIME-Version: 1.0
 Content-Type: text/plain
 Subject: #{ next_week ? "NEXT WEEK " : "" }Cover Required
+
 #{message_text}
 MESSAGE_END
 
