@@ -7,13 +7,14 @@ require 'rubygems'
 require 'pp'
 require 'uri'
 require 'net/http'
+require 'net/smtp'
 require 'time'
 require 'json'
 require_relative 'time_start_and_end_extensions'
 require_relative 'local_config'
 
 def usage
-  puts "usage: check-cover.rb [-h] [<YYYY-MM-DD>|nextweek] [<doodle-url>]"
+  puts "usage: check-cover.rb [-h] [email] [<YYYY-MM-DD>|nextweek] [<doodle-url>]"
 end
 
 if ! ARGV.index("-h").nil?
@@ -21,12 +22,21 @@ if ! ARGV.index("-h").nil?
   exit
 end
 
+send_email = false
+
+if ARGV[0] == "email"
+  send_email = true
+  ARGV.shift
+end
+
 check_date = ARGV.shift
 poll_url = ARGV.shift
+next_week = false
 
 if check_date.nil?
   check_date = (Time.now + 1.day).strftime("%Y-%m-%d")
 elsif check_date == "nextweek"
+  next_week = true
   check_date = (Time.now.start_of_work_week + 7.days).strftime("%Y-%m-%d")
 end
 
@@ -103,10 +113,29 @@ options.each do |option|
 end
 
 if lacking.length > 0
-  puts "We are missing cover for the following time periods:"
+
+  message_text = "We are missing cover for the following time periods:\n"
   lacking.each do |option|
-    puts "    #{option["formatted_date"]} #{option["text"]} #{option[:maybes].length == 0 ? "(With no maybes)" : "(With these maybes: #{option[:maybes].join(", ")})" }"
+    message_text += "    #{option["formatted_date"]} #{option["text"]} #{option[:maybes].length == 0 ? "(With no maybes)" : "(With these maybes: #{option[:maybes].join(", ")})" }\n"
   end
-  puts
-  puts "Go here to remedy: #{poll_url}"
+  message_text += "\nGo here to remedy: #{poll_url}\n"
+
+  if send_email
+  message = <<MESSAGE_END
+From: #{MAIL_LONG_FROM_ADDRESS}
+To: #{MAIL_LONG_NOTIFY_ADDRESS}
+MIME-Version: 1.0
+Content-Type: text/plain
+Subject: #{ next_week ? "NEXT WEEK " : "" }Cover Required
+#{message_text}
+MESSAGE_END
+
+    smtp = Net::SMTP.new MAIL_SERVER, MAIL_PORT
+    smtp.enable_starttls
+    smtp.start(MAIL_DOMAIN, MAIL_USER, MAIL_PASS, MAIL_AUTHTYPE) do
+      smtp.send_message message, MAIL_FROM_ADDRESS, MAIL_NOTIFY_ADDRESS
+    end
+  else
+    print message_text
+  end
 end
