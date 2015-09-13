@@ -183,7 +183,7 @@ request_token = consumer.get_request_token
 access_token = request_token.get_access_token
 response = access_token.post( '/api1/polls', xml, { 'Content-Type' => 'application/xml' })
 File.open(filename, "w") do |f|
-  f.write "http://doodle.com/#{response["content-location"]}"
+  f.write "http://doodle.com/poll/#{response["content-location"]}"
 end
 puts response.to_hash.inspect
 puts response.body

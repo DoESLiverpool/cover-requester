@@ -72,12 +72,19 @@ if response.nil?
 end
 
 json = response.body
+if json.length == 0
+    p response.code
+    p response.message
+    response.each do |key, value|
+        p "#{key}: #{value}"
+    end
+    exit
+end
+
 json = json.gsub(/.*\$\.extend\(true, doodleJS\.data, \{"poll":/m, '')
 json = json.gsub(/\}\);\n.*/m, '')
 
 poll = JSON.parse(json)
-
-raise "Couldn't parse json" if json.nil?
 
 options = poll["fcOptions"]
 people = poll["participants"]
