@@ -1,0 +1,4 @@
+.*.sw?
+doodle-*.dat
+local_config.rb
+latest-poll.dat
