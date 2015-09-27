@@ -22,8 +22,10 @@ MAIL_PASS = 'yourpassword'
 MAIL_AUTHTYPE = :login
 MAIL_FROM_ADDRESS = "example@example.com"
 MAIL_LONG_FROM_ADDRESS = "Example Generator <example@example.com>"
-MAIL_NOTIFY_ADDRESS = ["example@example.com"]
-MAIL_LONG_NOTIFY_ADDRESS = "Example <example@example.com>"
+MAIL_REQUEST_ADDRESS = ["example-general@example.com"]
+MAIL_LONG_REQUEST_ADDRESS = "Example General List <example-general@example.com>"
+MAIL_COVER_ADDRESS = ["example-emergency@example.com"]
+MAIL_LONG_COVER_ADDRESS = "Example Emergency Cover List <example-emergency@example.com>"
 
 # The times of day that you need cover, default is AM/PM/Eve
 TIME_SPANS = [

@@ -7,6 +7,7 @@ require 'rubygems'
 require 'pp'
 require 'uri'
 require 'net/http'
+require 'net/smtp'
 require 'time'
 # Note that default ri_cal sets finish of all day events incorrectly to the end of the
 # following day rather than the start, johnmckerrell's fork has "fixed" this.
@@ -182,9 +183,41 @@ consumer = OAuth::Consumer.new DOODLE_OAUTH_KEY, DOODLE_OAUTH_SECRET, {:site=>"h
 request_token = consumer.get_request_token
 access_token = request_token.get_access_token
 response = access_token.post( '/api1/polls', xml, { 'Content-Type' => 'application/xml' })
+
+poll_url = "http://doodle.com/poll/#{response["content-location"]}"
 File.open(filename, "w") do |f|
-  f.write "http://doodle.com/poll/#{response["content-location"]}"
+  f.write poll_url
 end
+
+message_text = <<TEXT_END
+Please fill in the DoES Liverpool Doodle for cover for next week,
+week commencing #{week_start}.
+
+You can find the Doodle Poll here:
+  #{poll_url}
+
+Thanks!
+
+DoES Liverpool Organisers
+TEXT_END
+
+message = <<MESSAGE_END
+From: #{MAIL_LONG_FROM_ADDRESS}
+To: #{MAIL_LONG_REQUEST_ADDRESS}
+MIME-Version: 1.0
+Content-Type: text/plain
+Subject: DoES Liverpool Opening & Closing
+
+#{message_text}
+MESSAGE_END
+
+smtp = Net::SMTP.new MAIL_SERVER, MAIL_PORT
+smtp.enable_starttls
+smtp.start(MAIL_DOMAIN, MAIL_USER, MAIL_PASS, MAIL_AUTHTYPE) do
+  smtp.send_message message, MAIL_FROM_ADDRESS, MAIL_REQUEST_ADDRESS
+end
+
+
 puts response.to_hash.inspect
 puts response.body
 puts response.inspect

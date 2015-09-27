@@ -130,7 +130,7 @@ if lacking.length > 0
   if send_email
   message = <<MESSAGE_END
 From: #{MAIL_LONG_FROM_ADDRESS}
-To: #{MAIL_LONG_NOTIFY_ADDRESS}
+To: #{MAIL_LONG_COVER_ADDRESS}
 MIME-Version: 1.0
 Content-Type: text/plain
 Subject: #{ next_week ? "NEXT WEEK " : "" }Cover Required
@@ -141,7 +141,7 @@ MESSAGE_END
     smtp = Net::SMTP.new MAIL_SERVER, MAIL_PORT
     smtp.enable_starttls
     smtp.start(MAIL_DOMAIN, MAIL_USER, MAIL_PASS, MAIL_AUTHTYPE) do
-      smtp.send_message message, MAIL_FROM_ADDRESS, MAIL_NOTIFY_ADDRESS
+      smtp.send_message message, MAIL_FROM_ADDRESS, MAIL_COVER_ADDRESS
     end
   else
     print message_text
